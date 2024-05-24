@@ -211,8 +211,7 @@ def main(root_folder:str, save_folder:str):
     # This gets translated from embedding size back to 64x64
 
     cfg = get_config()
-    print(sys.argv[3:])
-    cfg.merge_from_args(sys.argv[3:])
+    cfg.merge_from_args(sys.argv[4:])
     gpt_model = model.GPT(cfg.model)
 
     model_trainer = train.Trainer(
