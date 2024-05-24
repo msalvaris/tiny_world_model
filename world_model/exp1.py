@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm.auto import tqdm
 import fire
 from datetime import datetime
+import sys
 
 from world_model import dataset, model, train, utils
 
@@ -175,10 +176,12 @@ def _convert_and_transform(fname, transform=None):
 
 
 def main(root_folder:str, save_folder:str):
-
+    
     current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     experiment_id = f"experiment_ball_{current_time}"
     print(f"Starting training {experiment_id}")
+
+    
     
     os.makedirs(save_folder, exist_ok=True) # Check we are able to save results to appropriate location
 
@@ -208,6 +211,7 @@ def main(root_folder:str, save_folder:str):
     # This gets translated from embedding size back to 64x64
 
     cfg = get_config()
+    cfg.merge_from_args(sys.argv[3:])
     gpt_model = model.GPT(cfg.model)
 
     model_trainer = train.Trainer(

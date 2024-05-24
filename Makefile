@@ -83,7 +83,10 @@ install: ## Install the tiny world model repo. Run from the src directory
 create_dataset: ## Create the ball dataset
 	create-dataset ball "/data/ball_dataset" 1000
 
+train-example: ## Simple training example
+	train ball "/data/ball_dataset" "/data/experiments"
+
 train: ## Train model
-	train ball "/data/ball_dataset" "/cloud_data/experiments"
+	train ball "/data/ball_dataset" "/cloud_data/experiments" --trainer.batch_size=128 --trainer.num_epochs=120
 
 .PHONY: help build run stop clean save load
