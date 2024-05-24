@@ -1,6 +1,7 @@
 import numpy as np
 from PIL import Image
 import torch
+from ast import literal_eval
 
 
 def combine_images(image_list, rows=None, cols=None, padding=10, background_color=(255, 255, 255)):
