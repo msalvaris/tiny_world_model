@@ -54,7 +54,7 @@ run-local: ## Target to run the Docker container locally to test
 	docker run --rm -it $(ENV_VARS) $(RUN_FLAGS) --name $(CONTAINER_NAME) $(IMAGE_NAME):$(IMAGE_TAG)
 
 run-gpu: ## Target to run the Docker container on GPU
-	docker run --rm -it --gpus all $(ENV_VARS) $(RUN_FLAGS) --name $(CONTAINER_NAME) $(IMAGE_NAME):$(IMAGE_TAG)
+	docker run --rm -it --gpus all $(ENV_VARS) $(GPU_RUN_FLAGS) --name $(CONTAINER_NAME) $(IMAGE_NAME):$(IMAGE_TAG)
 
 stop: ## Target to stop and remove the Docker container
 	docker stop $(CONTAINER_NAME) || true
