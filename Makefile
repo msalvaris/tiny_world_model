@@ -46,7 +46,7 @@ help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 prepare: ## Prepare lambda box for use
-	sudo usermod -aG docker $USER
+	sudo usermod -aG docker $(USER)
 	newgrp docker
 	mkdir /home/ubuntu/_data
 
