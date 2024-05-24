@@ -40,14 +40,15 @@ BUILD_FLAGS :=
 
 # Set any additional flags for the Docker run command
 RUN_FLAGS := -p 8080:80 -v /home/mat/repos/tiny_world_model:/src -v /home/mat/data:/data
-GPU_RUN_FLAGS := -p 8080:80 -v /home/ubuntu/repos/tiny_world_model:/src -v /home/ubuntu/_data:/data
+GPU_RUN_FLAGS := -p 8080:80 -v /home/ubuntu/repos/tiny_world_model:/src -v /home/ubuntu/_data:/data -v /home/ubuntu/data1:/cloud_data
 
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-prepate:
+prepare: ## Prepare lambda box for use
 	sudo usermod -aG docker $USER
 	newgrp docker
+	mkdir /home/ubuntu/_data
 
 ## Docker commands
 build: ## Build docker repo
@@ -83,6 +84,6 @@ create_dataset: ## Create the ball dataset
 	create-dataset ball "/data/ball_dataset" 1000
 
 train: ## Train model
-	train ball "/data/ball_dataset" "/data/experiments"
+	train ball "/data/ball_dataset" "/cloud_data/experiments"
 
 .PHONY: help build run stop clean save load
