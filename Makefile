@@ -40,7 +40,7 @@ BUILD_FLAGS :=
 
 # Set any additional flags for the Docker run command
 RUN_FLAGS := -p 8080:80 -v /home/mat/repos/tiny_world_model:/src -v /home/mat/data:/data
-GPU_RUN_FLAGS := -p 8080:80 -v /home/mat/repos/tiny_world_model:/src -v /home/mat/data:/data
+GPU_RUN_FLAGS := -p 8080:80 -v /home/ubuntu/repos/tiny_world_model:/src -v /home/ubuntu/data1:/data
 
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
