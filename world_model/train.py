@@ -95,7 +95,6 @@ class Trainer:
         self.optimizer = gpt_model.configure_optimizers(config)
 
         # setup the dataloader
-
         train_loader = DataLoader(
             self.train_dataset,
             batch_size=config.batch_size,

@@ -214,7 +214,6 @@ def main():
     # The output of the transformet is Batch x Timestamps x embedding size
     # This gets translated from embedding size back to 64x64
 
-    
     gpt_model = model.GPT(cfg.model)
 
     model_trainer = train.Trainer(
