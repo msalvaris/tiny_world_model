@@ -8,6 +8,8 @@ from PIL import Image
 import fire
 from datetime import datetime
 import sys
+from rich.progress import Progress, SpinnerColumn,TextColumn, TaskProgressColumn, TimeRemainingColumn
+import atexit
 
 from world_model import dataset, model, train, utils
 
@@ -16,8 +18,8 @@ def _create_movie(
     seq_path, root_folder, transform, gpt_model, sequence, save_name, device
 ):
     
-    basename = os.path.basename(save_name)
-    os.makedirs(basename, exist_ok=True)
+    dirname = os.path.dirname(save_name)
+    os.makedirs(dirname, exist_ok=True)
 
     # Create a writer object
     writer = imageio.get_writer(
@@ -225,11 +227,14 @@ def main():
     savelocation = os.path.join(cfg.system.work_dir, experiment_id, "checkpoints")
     os.makedirs(savelocation, exist_ok=True) # Check we are able to save results to appropriate location
     torch.save(gpt_model.state_dict(), os.path.join(savelocation, "trained_model.pt"))
-    print(f"Model saved at {os.path.join(savelocation, "trained_model.pt")}")
+    print(f"Model saved at {os.path.join(savelocation, 'trained_model.pt')}")
 
-   
+
 
 def generate_movie(checkpoint_path:str, dataset_dir:str, save_dir:str):
+
+    # Fix issue with rich https://stackoverflow.com/questions/71143520/python-rich-restore-cursor-default-values-on-exit
+    atexit.register(lambda: print("\x1b[?25h"))  
     device = "cuda" if torch.cuda.is_available() else "cpu"
     cfg = get_config()
     gpt_model = model.GPT(cfg.model)
@@ -241,20 +246,35 @@ def generate_movie(checkpoint_path:str, dataset_dir:str, save_dir:str):
     transform = transforms.Compose(
         [transforms.ToTensor(), Flatten()]  # Convert the image to a PyTorch tensor
     )
+    gpt_model.load_state_dict(torch.load(checkpoint_path))
+    gpt_model.to(device)
+    
+    progress = Progress(
+        SpinnerColumn("bouncingBall"),
+        TextColumn("{task.description}  {task.completed} of {task.total}"),
+        TaskProgressColumn(),
+        TimeRemainingColumn(),
+    )
+    
     
     sequences = sorted(os.listdir(dataset_dir))
     os.makedirs(save_dir, exist_ok=True)
-    for idx,sequence in enumerate(sequences):
-        save_name = os.path.join(save_dir, f"sequence_{idx}.mp4")
-        seq_path = os.path.join(dataset_dir,sequence)
-        gpt_model.load_state_dict(torch.load(checkpoint_path))
-        
-        gpt_model.to(device)
+    generate_task = progress.add_task("[green]Generating movies...", total=len(sequences))
+    progress.start()
+    try:
 
-        _create_movie(
-            seq_path, dataset_dir, transform, gpt_model, sequence, save_name, device
-        )
+        for idx,sequence in enumerate(sequences):
+            save_name = os.path.join(save_dir, f"sequence_{idx}.mp4")
+            seq_path = os.path.join(dataset_dir,sequence)
+            progress.update(generate_task, description=f"[green]Generating {save_name}...")
+            _create_movie(
+                seq_path, dataset_dir, transform, gpt_model, sequence, save_name, device
+            )
+            progress.update(generate_task, advance=1)
+        progress.stop()
 
+    except KeyboardInterrupt: # Restore appropriate state for rich
+        progress.stop()
 
 def cli():
     fire.Fire({
