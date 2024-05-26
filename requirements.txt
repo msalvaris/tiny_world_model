@@ -1,4 +1,4 @@
-imageio
+imageio[ffmpeg]
 Pillow
 wandb
 tqdm
