@@ -110,7 +110,7 @@ class CfgNode:
                 - if val is simply a string, literal_eval will throw a ValueError
                 - if val represents a thing (like an 3, 3.14, [1,2,3], False, None, etc.) it will get created
                 """
-            except ValueError:
+            except (ValueError, SyntaxError):
                 pass
 
             # find the appropriate object to insert the attribute into

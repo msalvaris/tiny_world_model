@@ -16,7 +16,14 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/your-username/your-app-repo',
     packages=find_packages(),
-    entry_points={'console_scripts': ['create-dataset=world_model.simulate.ball:cli','train=world_model.exp1:cli']},
+    entry_points={
+        'console_scripts': 
+            [
+                'create-dataset=world_model.simulate.ball:cli',
+                'train=world_model.exp1:main',
+                'generate=world_model.exp1:cli',
+            ]
+        },
     include_package_data=True,
     install_requires=requirements,
     classifiers=[
