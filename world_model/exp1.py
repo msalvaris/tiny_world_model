@@ -11,7 +11,39 @@ import sys
 from rich.progress import Progress, SpinnerColumn,TextColumn, TaskProgressColumn, TimeRemainingColumn
 import atexit
 
-from world_model import dataset, model, train, utils
+from world_model import dataset, model, train, utils, movies
+
+
+def _prediction_generator(seq_path, root_folder, transform, gpt_model, sequence, device):
+    gpt_model.eval()
+    with torch.no_grad():
+        for paths in generate_paths(seq_path):
+            example = torch.stack(
+                [
+                    _convert_and_transform(
+                        os.path.join(root_folder, sequence, ex), transform=transform
+                    )
+                    for ex in paths
+                ]
+            )
+            # example needs to be shape b x t x (64*64), b=1,t=4
+            batch = example.to(device)
+            pred, _ = gpt_model(batch.unsqueeze(dim=0))
+            pred_array = (
+                torch.nn.functional.softmax(pred, dim=1)
+                .argmax(dim=1)
+                .detach()
+                .cpu()
+                .numpy()
+                * 255
+            ).astype(np.uint8)
+            yield pred_array.squeeze() # Remove batch dimension
+
+
+def _ground_truth_generator(seq_path,root_folder, sequence):
+    img_paths = sorted(os.listdir(seq_path), key=_custom_sorter)
+    for path in img_paths[4:]: # Only loop through the images we will generate predictions for
+        yield np.array(Image.open(os.path.join(root_folder, sequence, path)))
 
 
 def _create_movie(
@@ -266,9 +298,14 @@ def generate_movie(checkpoint_path:str, dataset_dir:str, save_dir:str):
             save_name = os.path.join(save_dir, f"sequence_{idx}.mp4")
             seq_path = os.path.join(dataset_dir,sequence)
             progress.update(generate_task, description=f"[green]Generating {save_name}...")
-            _create_movie(
-                seq_path, dataset_dir, transform, gpt_model, sequence, save_name, device
-            )
+
+            pred_gen = _prediction_generator(seq_path, dataset_dir, transform, gpt_model, sequence, device)
+            gt_gen = _ground_truth_generator(seq_path, dataset_dir, sequence)
+            
+            movies.generate_movie(gt_gen, pred_gen, save_name)
+            # _create_movie(
+            #     seq_path, dataset_dir, transform, gpt_model, sequence, save_name, device
+            # )
             progress.update(generate_task, advance=1)
         progress.stop()
 
