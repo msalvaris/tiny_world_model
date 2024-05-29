@@ -40,7 +40,8 @@ BUILD_FLAGS :=
 
 # Set any additional flags for the Docker run command
 RUN_FLAGS := -p 8080:80 -v /home/mat/repos/tiny_world_model:/src -v /home/mat/data:/data
-GPU_RUN_FLAGS := -p 8080:80 -v /home/ubuntu/repos/tiny_world_model:/src -v /home/ubuntu/_data:/data -v /home/ubuntu/data1:/cloud_data
+#GPU_RUN_FLAGS := -p 8080:80 -v /home/ubuntu/repos/tiny_world_model:/src -v /home/ubuntu/_data:/data -v /home/ubuntu/data1:/cloud_data
+GPU_RUN_FLAGS := -p 8080:80 -v /home/ubuntu/repos/tiny_world_model:/src -v /home/ubuntu/_data:/data
 
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
@@ -87,7 +88,7 @@ train-example: ## Simple training example
 	train --data.dataset_dir="/data/ball_dataset" --system.work_dir="/data/experiments"
 
 train: ## Train model
-	train --data.dataset_dir="/data/ball_dataset" --system.work_dir="/cloud_data/experiments" --trainer.batch_size=128 --trainer.num_epochs=120
+	train --data.dataset_dir="/data/ball_dataset" --system.work_dir="/data/experiments" --trainer.batch_size=128 --trainer.num_epochs=120
 
 generate_movie: ## Generate world model movie using trained model
 	generate movie "/cloud_data/experiments/trained_mode.pt" "/data/ball_dataset" "/data/movies"
