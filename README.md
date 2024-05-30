@@ -2,36 +2,23 @@
 
 Welcome to the Tiny World Model project! This project implements a simplified world model designed for educational and research purposes. The model simulates a basic environment where we get a causal language model to predict future images. This README will guide you through the setup, usage, and development process of the project.
 
+[Project page](https://msalvaris.github.io/tiny_world_model/)
+
 ## Table of Contents
 
-- [Introduction](#introduction)
-- [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Configuration](#configuration)
-- [Examples](#examples)
-- [Contributing](#contributing)
 - [License](#license)
-
-## Introduction
-
-The Tiny World Model project is a minimalistic implementation of a world model, inspired by recent advancements in AI and machine learning. The goal is to provide a simple yet functional environment where . 
-## Features
 
 
 ## Installation
-
+All relevant commands can be found in the [makefile](Makefile). Run ```make help``` to see them.
+It is designed to be run inside a docker container and these experiments were run using [lambda cloud](https://lambdalabs.com/service/gpu-cloud) so should be easy to recreate there.
 
 
 ## Usage
+To start the training simply run ```make train```
 
-
-
-## Configuration
-
-
-
-## Examples
 
 
 ## License

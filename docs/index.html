@@ -120,10 +120,12 @@
         <h2 class="title is-3">Introduction</h2>
         <div class="content has-text-justified">
           <p>
-            We see world models appear everywhere from robotics to self driving cars. These are seen as the answer to many of the shortcommings of standard modeling approaches. 
-            The size of the models necessary to process information from the camera setups on robots and self driving cars can be cost prohobitive. I still wanted to play with the idea of world models though.
-            To that end I devised a very simply ball world, in this world the ball bounces around aimlesly for N frames. What I want is for the model to take as inpu the preceding frames and output the next frame in essence
-            predicting where the ball would go next. It is an extremely simple world to model but it does incorporate the necessary pieces of more complete world models.
+            World models are prevalent in various applications, from robotics to self-driving cars. 
+            They are seen as solutions to many shortcomings of standard modeling approaches and can make reinforcement learning (RL) more sample efficient. 
+            However, the models required to process information from camera setups on robots and self-driving cars can be prohibitively expensive.
+            Despite this, I wanted to experiment with the concept of world models. So, I created a simple "ball world" where a ball bounces around aimlessly for N frames. 
+            The goal is for the model to take the preceding frames as input and predict the next frame, essentially forecasting the ball's next position. 
+            Although this is a very basic world to model, it includes the essential components of more complex world models.
           </p>
         </div>
       </div>
@@ -135,7 +137,38 @@
 
 
 
+<section class="section hero is-dark">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Architecture</h2>
+        <div class="content has-text-justified">
+          <p>
+            The model architecture is quite simple. It features an encoder that takes an image and transforms it into an embedding of size N. 
+            Although there are various ways to achieve this, the most common being the use of a Convolutional Neural Network (CNN), 
+            I opted for a Multi-Layer Perceptron (MLP) due to the small input dimensionality.
 
+            After encoding the input, M of these encoded inputs are fed into a causal language model. 
+            I used a straightforward architecture inspired by Karpathy's GPT. 
+            The rationale behind this choice is to show that a task-specific architecture isn't necessary and that Transformers perform exceptionally well in this context. 
+            The model's task is to predict the next frame based on the previous M frames, outputting an embedding of size N.
+
+            This embedding is then passed into a decoder, which is mainly an MLP, to generate a 64x64 binary image. This image represents the predicted next state of the "ball world."
+          </p>
+        </div>
+
+        <h2 class="title is-3">Training</h2>
+        <div class="content has-text-justified">
+          <p>
+            
+          </p>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</section>
 
 
 
