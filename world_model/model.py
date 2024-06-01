@@ -15,7 +15,7 @@ import math
 import torch.nn as nn
 from torch.nn import functional as F
 from world_model import utils
-
+from world_model import losses
 
             
 class NewGELU(nn.Module):
@@ -199,6 +199,7 @@ class GPT(nn.Module):
 
         # report number of parameters (note we don't count the decoder parameters in lm_head)
         n_params = sum(p.numel() for p in self.transformer.parameters())
+        self.percept_loss = losses.VGGPerceptualLoss()
         print("number of parameters: %.2fM" % (n_params/1e6,))
 
     def _init_weights(self, module):
@@ -258,7 +259,7 @@ class GPT(nn.Module):
         optimizer = torch.optim.AdamW(optim_groups, lr=train_config.learning_rate, betas=train_config.betas)
         return optimizer
 
-    def forward(self, img_sequences, targets=None):
+    def forward(self, img_sequences, targets=None, use_perceptual_loss=False):
         device = img_sequences.device
         b, t, seqsize = img_sequences.size()
         # Reshape to pass into MLP as a set of batches as each image can be treated as such
@@ -284,5 +285,14 @@ class GPT(nn.Module):
           # we need output of transformer to match transformed outputs
           # loss = F.mse_loss(mlp_logits, targets)
           loss = F.cross_entropy(mlp_logits, targets.view(-1,64,64))
+          
+          if use_perceptual_loss:
+            # Calculate perceptual loss
+            targets_view = targets.view(-1,64,64)[:, None,:,:] # Add channel dimension in
+            # We want the second channel to be 0 everywhere and 1 where the ball is
+            lgts = mlp_logits[:,1,:,:]
+            lgts = lgts[:,None,:,:]
+            percept_loss = self.percept_loss(lgts, targets_view) 
+            loss = loss+percept_loss
 
         return mlp_logits, loss

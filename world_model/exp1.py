@@ -174,7 +174,7 @@ def get_config():
     C.trainer.learning_rate = (
         5e-3  # the model we're using is so small that we can go a bit faster
     )
-    C.trainer.batch_size = 64
+    C.trainer.batch_size = 16
     C.trainer.num_epochs = 2
     C.trainer.num_workers = 0
 

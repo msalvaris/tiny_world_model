@@ -77,6 +77,7 @@ class Trainer:
         for idx, (batch, target) in enumerate(validation_loader):
             batch = batch.to(self.device)
             target = target.to(self.device)
+
             logits, self.val_loss = gpt_model(batch, targets=target.type(torch.long))
 
             progress_bar.set_postfix(
@@ -108,12 +109,16 @@ class Trainer:
         num_training_steps = config.num_epochs * len(train_loader)
 
         progress_bar = tqdm(range(num_training_steps))
+        use_perceptual_loss = False
         for epoch in range(config.num_epochs):
             progress_bar.set_description(f"Epoch {epoch}")
             for idx, (batch, target) in enumerate(train_loader):
+                if epoch>10:
+                    use_perceptual_loss = True
+
                 batch = batch.to(self.device)
                 target = target.to(self.device)
-                logits, self.loss = gpt_model(batch, targets=target.type(torch.long))
+                logits, self.loss = gpt_model(batch, targets=target.type(torch.long),use_perceptual_loss=use_perceptual_loss)
                 self.loss.backward()
 
                 self.optimizer.step()
