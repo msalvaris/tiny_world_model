@@ -113,7 +113,7 @@ class Trainer:
         for epoch in range(config.num_epochs):
             progress_bar.set_description(f"Epoch {epoch}")
             for idx, (batch, target) in enumerate(train_loader):
-                if epoch>10:
+                if epoch>100:
                     use_perceptual_loss = True
 
                 batch = batch.to(self.device)
