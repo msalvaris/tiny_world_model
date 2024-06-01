@@ -94,14 +94,14 @@ class Block(nn.Module):
 
 
 class MLP(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size, with_sigmoid=False):
+    def __init__(self, input_size, hidden_size, output_size, with_relu=False):
         super(MLP, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.fc3 = nn.Linear(hidden_size, output_size)
         self.relu = nn.ReLU()
-        if with_sigmoid:
-          self.final_activation = torch.sigmoid
+        if with_relu:
+          self.final_activation = nn.ReLU()
         else:
           self.final_activation = nn.Identity()
 
@@ -180,7 +180,9 @@ class GPT(nn.Module):
                 'gpt-nano':     dict(n_layer=3, n_head=3, n_embd=48),
             }[config.model_type])
         self.input_mlp = MLP(64*64, 256, config.n_embd)
-        self.output_mlp = MLPSoftmax(config.vocab_size, 256, 64*64)
+        # self.output_mlp = MLPSoftmax(config.vocab_size, 256, 64*64)
+
+        self.output_mlp = MLP(config.vocab_size, 256, 64*64, with_relu=True)
 
         self.transformer = nn.ModuleDict(dict(
             # wte = nn.Embedding(config.vocab_size, config.n_embd),
@@ -283,14 +285,15 @@ class GPT(nn.Module):
         loss = None
         if targets is not None:
           # we need output of transformer to match transformed outputs
-          # loss = F.mse_loss(mlp_logits, targets)
-          loss = F.cross_entropy(mlp_logits, targets.view(-1,64,64))
+          loss = F.mse_loss(mlp_logits, targets.to(torch.float32))
+        #   loss = F.cross_entropy(mlp_logits, targets.view(-1,64,64))
           
           if use_perceptual_loss:
             # Calculate perceptual loss
             targets_view = targets.view(-1,64,64)[:, None,:,:] # Add channel dimension in
             # We want the second channel to be 0 everywhere and 1 where the ball is
-            lgts = mlp_logits[:,1,:,:]
+            # lgts = mlp_logits[:,1,:,:]
+            lgts = mlp_logits.view(-1,64,64)
             lgts = lgts[:,None,:,:]
             percept_loss = self.percept_loss(lgts, targets_view) 
             loss = loss+percept_loss

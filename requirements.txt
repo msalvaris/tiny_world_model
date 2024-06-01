@@ -1,4 +1,5 @@
-imageio[ffmpeg]
+imageio
+imageio-ffmpeg==0.4.9
 Pillow
 wandb
 tqdm
