@@ -91,6 +91,6 @@ train: ## Train model
 	train --data.dataset_dir="/data/ball_dataset" --system.work_dir="/data/experiments" --trainer.batch_size=128 --trainer.num_epochs=200
 
 generate_movie: ## Generate world model movie using trained model
-	generate movie "/data/experiments/experiment_ball_2024-06-01_10:55:47/checkpoints/trained_model.pt" "/data/ball_dataset" "/data/movies"
+	generate movie "/data/experiments/experiment_ball_2024-06-01_15:40:45/checkpoints/trained_model.pt" "/data/ball_dataset" "/data/movies"
 
 .PHONY: help build run stop clean save load
