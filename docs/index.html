@@ -113,7 +113,7 @@
 <!-- End teaser video -->
 
 <!-- Paper abstract -->
-<section class="section hero is-light">
+<section class="section hero is-dark">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
@@ -160,18 +160,51 @@
           <img src="static/images/model_diagram.png" alt="MY ALT TEXT"/>
         </div>
 
-        <h2 class="title is-3">Training</h2>
-        <div class="content has-text-justified">
-          <p>
-            
-          </p>
-        </div>
-
 
       </div>
     </div>
   </div>
 </section>
+
+<section class="section hero is-dark">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Dataset</h2>
+        <div class="content has-text-justified">
+          
+          <p>
+            The world model's dataset is generated synthetically using Python. 
+            Utilizing the Pillow library, a ball is drawn on a 64x64 canvas, and based on its trajectory and velocity, the ball is redrawn at a new location in each subsequent frame. 
+            A total of 1,000 sequences were generated, with each sequence comprising 20 frames. 
+            To introduce variation among the sequences, the velocity (ranging from -4 pixels to 4 pixels) and the initial location were uniformly sampled. 
+            Out of these sequences, 10% were reserved for validation purposes.z
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Training</h2>
+        <div class="content has-text-justified">
+          
+          <p>
+          
+          The training process is kept straightforward, employing a constant learning rate and the AdamW optimizer. 
+          The 20-frame sequences are divided into overlapping 5-frame sequences, where the first 4 frames serve as the input, and the final frame serves as the target for the model. 
+          The model undergoes approximately 160 epochs of training, which takes around 30 minutes on an A10 GPU.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 
 
